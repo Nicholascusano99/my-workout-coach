@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101827">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Workout Coach">
+<link rel="manifest" href="manifest.webmanifest">
+<title>My Workout Coach</title>
+<style>
+:root{--bg:#0b1220;--panel:#121d30;--panel2:#19263c;--line:#2a3a54;--text:#f3f6fb;--muted:#a8b5c9;--accent:#7ce0b4;--blue:#8bbcff;--danger:#ff8f8f}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#101827,#0b1220 360px);color:var(--text);font:16px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+button,input,select{font:inherit}button{cursor:pointer;border:0;border-radius:12px;padding:12px 14px;font-weight:700;background:var(--accent);color:#092018}button.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}button.danger{background:#4b2028;color:#ffd7d7}button:disabled{opacity:.45}
+header{padding:22px 18px 14px;max-width:900px;margin:auto}header .eyebrow{color:var(--accent);font-size:12px;letter-spacing:1.7px;font-weight:800;text-transform:uppercase}h1{margin:5px 0 4px;font-size:29px;letter-spacing:-.8px}header p{margin:0;color:var(--muted);font-size:14px}
+nav{display:flex;gap:7px;overflow:auto;padding:8px 14px 14px;max-width:900px;margin:auto;scrollbar-width:none}nav button{white-space:nowrap;background:transparent;color:var(--muted);border:1px solid var(--line);padding:10px 13px}nav button.active{background:var(--accent);color:#092018;border-color:var(--accent)}
+main{max-width:900px;margin:auto;padding:0 14px 36px}.page{display:none}.page.active{display:block}.panel{background:rgba(18,29,48,.96);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:13px;box-shadow:0 8px 25px #0002}.row{display:flex;gap:10px;align-items:center}.between{justify-content:space-between}.wrap{flex-wrap:wrap}.grow{flex:1;min-width:0}.muted{color:var(--muted)}.small{font-size:12px}.big{font-size:25px;font-weight:800;letter-spacing:-.5px}.section-title{font-size:19px;font-weight:800;margin:0 0 12px}.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.stat{background:var(--panel2);border-radius:14px;padding:13px}.stat .label{font-size:12px;color:var(--muted);margin-bottom:6px}.stat .value{font-size:23px;font-weight:800}.stat .sub{font-size:11px;color:var(--muted);margin-top:4px}
+label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px}input,select{width:100%;border:1px solid var(--line);background:#0c1525;color:var(--text);border-radius:10px;padding:11px;min-width:0}input:focus,select:focus{outline:2px solid #7ce0b455;border-color:var(--accent)}.field{min-width:0;flex:1}.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.fields.three{grid-template-columns:repeat(3,minmax(0,1fr))}.exercise{padding:14px 0;border-top:1px solid var(--line)}.exercise:first-of-type{border-top:0}.ex-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.ex-name{font-weight:800}.target{font-size:12px;color:var(--muted);margin-top:3px}.set-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}.set-grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}.set-grid label{text-align:center}.pill{display:inline-block;background:#20344b;border:1px solid #344c68;color:#cde2ff;border-radius:999px;padding:5px 8px;font-size:11px}.note{background:#172b2b;border:1px solid #28564b;color:#c8f6e4;border-radius:12px;padding:12px;font-size:13px;line-height:1.45}.bar{height:8px;background:#26364d;border-radius:99px;overflow:hidden}.bar span{display:block;height:100%;background:var(--accent);border-radius:99px}.history-item{padding:12px 0;border-top:1px solid var(--line)}.history-item:first-child{border-top:0}.empty{padding:20px;text-align:center;color:var(--muted)}canvas{width:100%;height:210px;display:block}.chart-label{font-size:12px;color:var(--muted);margin-top:4px}.footer{text-align:center;color:var(--muted);font-size:11px;padding:12px}
+@media(min-width:650px){.stats{grid-template-columns:repeat(4,minmax(0,1fr))}.fields{grid-template-columns:repeat(4,minmax(0,1fr))}.fields.three{grid-template-columns:repeat(3,minmax(0,1fr))}.two-col{display:grid;grid-template-columns:1fr 1fr;gap:13px}}
+</style>
+</head>
+<body>
+<header>
+ <div class="eyebrow">Train • Track • Progress</div>
+ <h1>My Workout Coach</h1>
+ <p>Your lifting log, body-composition dashboard, and next-session guide.</p>
+</header>
+<nav id="nav">
+ <button class="active" data-page="today">Today</button><button data-page="program">Program</button><button data-page="progress">Progress</button><button data-page="nutrition">Nutrition</button><button data-page="history">History</button><button data-page="settings">Backup</button>
+</nav>
+<main>
+<section class="page active" id="page-today">
+ <div class="panel">
+  <div class="row between wrap"><div><div class="muted small" id="todayDate"></div><div class="section-title" style="margin:5px 0" id="todayTitle">Your workout</div></div><select id="workoutSelect" style="width:auto;max-width:160px"><option>Upper A</option><option>Lower A</option><option>Upper B</option><option>Lower B</option></select></div>
+  <div class="note" id="coachNote">Log the work you complete. Recommendations improve as you build history.</div>
+ </div>
+ <div class="panel">
+  <div class="row between"><h2 class="section-title">Workout log</h2><span class="pill" id="exerciseCount">7 exercises</span></div>
+  <div class="fields" style="margin-bottom:12px"><div><label for="sessionDate">Session date</label><input type="date" id="sessionDate"></div><div><label for="sessionNotes">Session notes (optional)</label><input id="sessionNotes" placeholder="Energy, form, etc."></div></div>
+  <div id="exerciseList"></div>
+  <div class="panel" style="margin:12px 0;background:#0c1727">
+   <h3 style="margin:0 0 12px">Incline treadmill / cardio</h3>
+   <div class="fields three">
+    <div><label>Minutes</label><input type="number" id="cardioMinutes" value="15" min="0"></div>
+    <div><label>Speed (mph)</label><input type="number" id="cardioSpeed" value="3" min="0" step=".1"></div>
+    <div><label>Incline (%)</label><input type="number" id="cardioIncline" value="6" min="0" step=".5"></div>
+   </div>
+  </div>
+  <div class="row wrap"><button id="saveWorkout" class="grow">Save workout</button><button id="clearWorkout" class="secondary">Clear entries</button></div>
+ </div>
+</section>
+<section class="page" id="page-program">
+ <div class="panel"><h2 class="section-title">Your 4-day program</h2><p class="muted small">Use a weight that leaves about 1–3 good reps in reserve. Rest 2–3 minutes on compound lifts and 60–120 seconds on accessories.</p><div id="programList"></div></div>
+ <div class="panel"><h2 class="section-title">Progression rules</h2><div class="note">When you reach the top of the rep range on every set with good form, increase the load slightly next time. If reps fall below range or form breaks down, hold or reduce the load. Machine stack weights vary by gym.</div></div>
+</section>
+<section class="page" id="page-progress">
+ <div class="panel"><h2 class="section-title">Your dashboard</h2><div class="stats" id="stats"></div></div>
+ <div class="two-col">
+  <div class="panel"><h2 class="section-title">Body weight</h2><canvas id="weightChart" width="600" height="250"></canvas><div class="chart-label">Log measurements under Progress below.</div></div>
+  <div class="panel"><h2 class="section-title">Body fat</h2><canvas id="fatChart" width="600" height="250"></canvas><div class="chart-label">Scale readings fluctuate; look at trends.</div></div>
+ </div>
+ <div class="panel">
+  <h2 class="section-title">Add a body measurement</h2>
+  <div class="fields three">
+   <div><label>Date</label><input id="measureDate" type="date"></div><div><label>Weight (lb)</label><input id="measureWeight" type="number" min="0" step=".1" placeholder="200"></div><div><label>Body fat (%)</label><input id="measureFat" type="number" min="0" max="100" step=".1" placeholder="25"></div>
+  </div>
+  <div class="fields" style="margin-top:10px"><div><label>Waist (in, optional)</label><input id="measureWaist" type="number" min="0" step=".1" placeholder="Waist"></div><div><label>Notes (optional)</label><input id="measureNotes" placeholder="Morning, fasted, etc."></div></div>
+  <button id="saveMeasure" style="margin-top:12px;width:100%">Save measurement</button>
+ </div>
+ <div class="panel"><h2 class="section-title">Personal records</h2><div id="prs"></div></div>
+</section>
+<section class="page" id="page-nutrition">
+ <div class="panel"><h2 class="section-title">Daily nutrition target</h2><div class="stats">
+ <div class="stat"><div class="label">Calories</div><div class="value">2,400</div><div class="sub">Starting estimate</div></div><div class="stat"><div class="label">Protein</div><div class="value">200 g</div><div class="sub">Priority target</div></div><div class="stat"><div class="label">Carbs</div><div class="value">220 g</div><div class="sub">Fuel training</div></div><div class="stat"><div class="label">Fat</div><div class="value">80 g</div><div class="sub">Approximate target</div></div></div>
+ <p class="muted small">Targets are a starting estimate, not a medical prescription. Adjust from 2–3 weeks of weight trends, gym performance, hunger, and recovery.</p></div>
+ <div class="panel"><h2 class="section-title">Log today's intake</h2><div class="fields three">
+ <div><label>Date</label><input id="foodDate" type="date"></div><div><label>Calories</label><input id="foodCalories" type="number" min="0" placeholder="2400"></div><div><label>Protein (g)</label><input id="foodProtein" type="number" min="0" placeholder="200"></div>
+ <div><label>Carbs (g)</label><input id="foodCarbs" type="number" min="0" placeholder="220"></div><div><label>Fat (g)</label><input id="foodFat" type="number" min="0" placeholder="80"></div><div><label>Water (oz, optional)</label><input id="foodWater" type="number" min="0" placeholder="100"></div>
+ </div><button id="saveFood" style="margin-top:12px;width:100%">Save nutrition log</button></div>
+ <div class="panel"><h2 class="section-title">Nutrition history</h2><div id="foodHistory"></div></div>
+</section>
+<section class="page" id="page-history">
+ <div class="panel"><div class="row between"><h2 class="section-title">Workout history</h2><select id="historyFilter" style="width:auto"><option value="all">All workouts</option><option>Upper A</option><option>Lower A</option><option>Upper B</option><option>Lower B</option></select></div><div id="historyList"></div></div>
+</section>
+<section class="page" id="page-settings">
+ <div class="panel"><h2 class="section-title">Save and back up your data</h2><p class="muted">Your entries are saved in this browser on this device. Export backups regularly, especially before clearing browser data or changing phones.</p><div class="row wrap"><button id="exportData" class="grow">Export backup (.json)</button><button id="exportCsv" class="secondary grow">Export workouts (.csv)</button></div><div style="margin-top:14px"><label for="importFile">Restore a backup JSON file</label><input type="file" id="importFile" accept=".json,application/json"></div><button id="resetData" class="danger" style="margin-top:18px;width:100%">Delete all saved data</button></div>
+ <div class="panel"><h2 class="section-title">Add to iPhone Home Screen</h2><ol class="muted" style="padding-left:20px;line-height:1.7"><li>Host this app on an HTTPS website (for example, GitHub Pages).</li><li>Open the published URL in Safari on your iPhone.</li><li>Tap Share, then <b>Add to Home Screen</b>.</li><li>Keep a backup using Export backup.</li></ol><div class="note">This download is the app package, not a published website. It needs HTTPS hosting for a reliable Home Screen app experience. The browser's local data is not automatically synced across devices.</div></div>
+</section>
+<div class="footer">My Workout Coach · Private local-first tracker · Export backups regularly</div>
+</main>
+<script>
+const PROGRAM={
+"Upper A":[
+ ["Bench press",3,6,10,175,"lb"],["Lat pulldown",3,8,12,115,"lb"],["Incline dumbbell press",3,8,12,55,"lb each"],["Seated cable row",3,8,12,110,"lb"],["Dumbbell lateral raise",3,12,15,20,"lb each"],["Rope triceps pushdown",2,10,15,70,"lb"],["Dumbbell curls",2,10,15,30,"lb each"]],
+"Lower A":[
+ ["Barbell squat or leg press",3,6,10,145,"lb (confirm lift)"],["Romanian deadlift",3,8,10,135,"lb (confirm lift)"],["Leg curl",3,10,15,50,"machine-specific"],["Leg extension",2,10,15,50,"machine-specific"],["Standing calf raise",3,12,15,70,"machine-specific"],["Cable crunch",3,12,15,40,"machine-specific"]],
+"Upper B":[
+ ["Pull-ups or lat pulldown",3,6,10,105,"assistance/stack varies"],["Incline dumbbell press",3,8,12,55,"lb each"],["Chest-supported row",3,8,12,45,"lb each DB / machine varies"],["Machine chest press",2,10,12,95,"machine-specific"],["Rear delt fly",3,12,15,40,"machine-specific"],["Dumbbell lateral raise",2,12,15,15,"lb each"],["Hammer curls",2,10,15,25,"lb each"],["Overhead cable triceps extension",2,10,15,25,"machine-specific"]],
+"Lower B":[
+ ["Hip thrust",3,8,10,115,"lb (suggested)"],["Bulgarian split squat",3,8,10,15,"lb each DB or bodyweight"],["Leg curl",3,10,15,50,"machine-specific"],["Leg press",2,10,12,150,"machine-specific"],["Seated calf raise",3,12,15,55,"machine-specific"],["Hanging knee raises / reverse crunch",3,10,15,0,"bodyweight"]]
+};
+const KEY="myWorkoutCoach_v1";
+const defaultState={
+ sessions:[{id:"seed-upper-a-2026-10-25",date:"2026-10-25",workout:"Upper A",notes:"Initial workout logged from chat. Bench set 3 missing.",cardio:{minutes:15,speed:3,incline:6},exercises:[
+ {name:"Bench press",weight:175,unit:"lb",target:"3 × 6–10",sets:[8,7,null]},
+ {name:"Lat pulldown",weight:115,unit:"lb",target:"3 × 8–12",sets:[12,11,9]},
+ {name:"Incline dumbbell press",weight:55,unit:"lb each",target:"3 × 8–12",sets:[12,9,12]},
+ {name:"Seated cable row",weight:110,unit:"lb",target:"3 × 8–12",sets:[12,12,12]},
+ {name:"Dumbbell lateral raise",weight:20,unit:"lb each",target:"3 × 12–15",sets:[15,13,12]},
+ {name:"Rope triceps pushdown",weight:70,unit:"lb",target:"2 × 10–15",sets:[15,15]},
+ {name:"Dumbbell curls",weight:30,unit:"lb each",target:"2 × 10–15",sets:[12,12]}]}],
+ measurements:[{date:"2026-10-25",weight:200,bodyFat:25,waist:null,notes:"Starting estimate provided by user"}],
+ nutrition:[],settings:{}
+};
+let state=loadState();
+function loadState(){try{let s=JSON.parse(localStorage.getItem(KEY));return s&&Array.isArray(s.sessions)?s:structuredClone(defaultState)}catch(e){return structuredClone(defaultState)}}
+function persist(){localStorage.setItem(KEY,JSON.stringify(state));renderAll()}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function todayISO(){let d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+function pretty(d){if(!d)return"";return new Date(d+"T12:00:00").toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"})}
+function latestSession(workout){return state.sessions.filter(s=>s.workout===workout).sort((a,b)=>b.date.localeCompare(a.date))[0]}
+function findPrev(name,workout){let s=state.sessions.filter(x=>x.workout===workout).sort((a,b)=>b.date.localeCompare(a.date)).find(x=>x.exercises?.some(e=>e.name===name));return s?.exercises.find(e=>e.name===name)}
+function recommendation(ex,workout){let prev=findPrev(ex[0],workout);if(!prev)return `Start around ${ex[4]} ${ex[5]}`;let sets=prev.sets.filter(x=>x!==null&&x!==""&&Number.isFinite(Number(x))).map(Number);if(sets.length===prev.sets.length&&sets.every(x=>x>=ex[3]))return `Next: consider a small increase from ${prev.weight} ${prev.unit||ex[5]}`;if(sets.length&&sets.every(x=>x>=ex[2])&&sets.some(x=>x<ex[3]))return `Hold near ${prev.weight} ${prev.unit||ex[5]} and build reps`;return `Repeat ${prev.weight} ${prev.unit||ex[5]} and aim for clean reps`;}
+function setWorkoutDefaults(){let w=document.getElementById("workoutSelect").value;document.getElementById("todayTitle").textContent=w;document.getElementById("exerciseCount").textContent=PROGRAM[w].length+" exercises";let arr=PROGRAM[w];document.getElementById("exerciseList").innerHTML=arr.map((ex,i)=>{let prev=findPrev(ex[0],w);let weight=prev?.weight??ex[4];let reps=prev?.sets??Array(ex[1]).fill("");return `<div class="exercise" data-index="${i}"><div class="ex-head"><div class="grow"><div class="ex-name">${i+1}. ${esc(ex[0])}</div><div class="target">${ex[1]} sets · ${ex[2]}–${ex[3]} reps</div><div class="small muted" style="margin-top:5px">${esc(recommendation(ex,w))}</div></div><span class="pill">${esc(ex[5])}</span></div><div class="fields" style="margin-top:10px"><div><label>Weight (${esc(ex[5])})</label><input class="weight" type="number" step=".5" value="${esc(weight)}" placeholder="Weight"></div><div><label>Target</label><input value="${ex[1]} × ${ex[2]}–${ex[3]}" disabled></div></div><div class="set-grid ${ex[1]===2?"two":""}">${Array.from({length:ex[1]},(_,j)=>`<div><label>Set ${j+1} reps</label><input class="reps" type="number" min="0" value="${esc(reps[j]??"")}" placeholder="Reps"></div>`).join("")}</div></div>`}).join("");}
+function renderProgram(){document.getElementById("programList").innerHTML=Object.entries(PROGRAM).map(([w,exs])=>`<div class="exercise"><div class="ex-name">${w}</div>${exs.map(e=>`<div class="row between" style="padding:8px 0;border-top:1px solid var(--line);gap:12px"><div><b>${esc(e[0])}</b><div class="small muted">${e[1]} sets × ${e[2]}–${e[3]} reps</div></div><span class="pill">${e[4]||"Bodyweight"} ${esc(e[5])}</span></div>`).join("")}</div>`).join("")}
+function saveWorkout(){let w=document.getElementById("workoutSelect").value,date=document.getElementById("sessionDate").value||todayISO();let exs=[...document.querySelectorAll(".exercise[data-index]")].map(el=>{let i=+el.dataset.index,def=PROGRAM[w][i];return {name:def[0],weight:Number(el.querySelector(".weight").value)||0,unit:def[5],target:`${def[1]} × ${def[2]}–${def[3]}`,sets:[...el.querySelectorAll(".reps")].map(x=>x.value===""?null:Number(x.value))}});let session={id:"s-"+Date.now(),date,workout:w,notes:document.getElementById("sessionNotes").value,cardio:{minutes:Number(document.getElementById("cardioMinutes").value)||0,speed:Number(document.getElementById("cardioSpeed").value)||0,incline:Number(document.getElementById("cardioIncline").value)||0},exercises:exs};let idx=state.sessions.findIndex(s=>s.date===date&&s.workout===w);if(idx>=0){if(!confirm(`Replace the saved ${w} workout for ${pretty(date)}?`))return;state.sessions[idx]=session}else state.sessions.push(session);persist();alert("Workout saved on this device.");}
+function clearEntries(){if(!confirm("Clear reps and notes on this screen? This won't delete saved workouts."))return;document.querySelectorAll("#exerciseList .reps").forEach(x=>x.value="");document.getElementById("sessionNotes").value=""}
+function renderHistory(){let filter=document.getElementById("historyFilter").value;let ss=state.sessions.filter(s=>filter==="all"||s.workout===filter).sort((a,b)=>b.date.localeCompare(a.date));document.getElementById("historyList").innerHTML=ss.length?ss.map(s=>`<div class="history-item"><div class="row between"><div><b>${esc(s.workout)}</b><div class="small muted">${pretty(s.date)}</div></div><button class="secondary" onclick="viewSession('${esc(s.id)}')">Details</button></div><div class="small muted" style="margin-top:6px">${s.exercises.length} exercises · ${s.cardio?.minutes||0} min cardio ${s.notes?"· "+esc(s.notes):""}</div></div>`).join(""):`<div class="empty">No workouts saved yet.</div>`}
+function viewSession(id){let s=state.sessions.find(x=>x.id===id);if(!s)return;alert(`${s.workout} — ${pretty(s.date)}\n\n`+s.exercises.map(e=>`${e.name}: ${e.weight} ${e.unit||"lb"} | ${e.sets.map((r,i)=>`S${i+1}: ${r??"—"}`).join(", ")}`).join("\n")+`\n\nCardio: ${s.cardio?.minutes||0} min, ${s.cardio?.speed||0} mph, ${s.cardio?.incline||0}% incline\n${s.notes||""}`)}
+function drawChart(id,items,key,label){let c=document.getElementById(id),ctx=c.getContext("2d"),w=c.width,h=c.height;ctx.clearRect(0,0,w,h);ctx.strokeStyle="#2a3a54";ctx.fillStyle="#a8b5c9";ctx.lineWidth=1;ctx.font="12px sans-serif";for(let i=0;i<5;i++){let y=20+i*(h-55)/4;ctx.beginPath();ctx.moveTo(42,y);ctx.lineTo(w-12,y);ctx.stroke()}let vals=items.filter(x=>Number.isFinite(Number(x[key]))).slice().sort((a,b)=>a.date.localeCompare(b.date));if(!vals.length){ctx.fillText("Add measurements to see a trend",90,h/2);return}let min=Math.min(...vals.map(x=>Number(x[key]))),max=Math.max(...vals.map(x=>Number(x[key])));if(min===max){min-=1;max+=1}let x0=45,x1=w-18,y0=20,y1=h-35;ctx.fillStyle="#a8b5c9";ctx.fillText(max.toFixed(1),3,y0+4);ctx.fillText(min.toFixed(1),3,y1+4);ctx.strokeStyle="#7ce0b4";ctx.lineWidth=3;ctx.beginPath();vals.forEach((v,i)=>{let x=x0+(vals.length===1?.5:i/(vals.length-1))*(x1-x0),y=y1-(Number(v[key])-min)/(max-min)*(y1-y0);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();vals.forEach((v,i)=>{let x=x0+(vals.length===1?.5:i/(vals.length-1))*(x1-x0),y=y1-(Number(v[key])-min)/(max-min)*(y1-y0);ctx.fillStyle="#7ce0b4";ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);ctx.fill()});ctx.fillStyle="#a8b5c9";ctx.fillText(pretty(vals[0].date),x0,y1+23);if(vals.length>1){let t=pretty(vals[vals.length-1].date);ctx.fillText(t,Math.max(x0,x1-ctx.measureText(t).width),y1+23)}}
+function renderProgress(){let ms=state.measurements.slice().sort((a,b)=>a.date.localeCompare(b.date)),latest=ms[ms.length-1]||{};let completed=state.sessions.length;let totalCardio=state.sessions.reduce((n,s)=>n+(Number(s.cardio?.minutes)||0),0);let start=ms[0]||{};let fatLoss=latest.bodyFat!=null&&latest.weight!=null?(latest.weight*(1-latest.bodyFat/100)):null;document.getElementById("stats").innerHTML=`<div class="stat"><div class="label">Latest weight</div><div class="value">${latest.weight??"—"}${latest.weight!=null?" lb":""}</div><div class="sub">${latest.date?pretty(latest.date):"Add a measurement"}</div></div><div class="stat"><div class="label">Body fat</div><div class="value">${latest.bodyFat??"—"}${latest.bodyFat!=null?"%":""}</div><div class="sub">Target goal: 13%</div></div><div class="stat"><div class="label">Workouts logged</div><div class="value">${completed}</div><div class="sub">Including seeded first workout</div></div><div class="stat"><div class="label">Cardio logged</div><div class="value">${totalCardio} min</div><div class="sub">Across saved sessions</div></div>`;drawChart("weightChart",ms,"weight","Weight");drawChart("fatChart",ms,"bodyFat","Body fat");let best={};state.sessions.forEach(s=>s.exercises.forEach(e=>{let reps=e.sets.filter(v=>v!=null).map(Number);let volume=reps.length?Math.max(...reps):0;let score=(Number(e.weight)||0)*volume;if(!best[e.name]||score>best[e.name].score)best[e.name]={weight:e.weight,unit:e.unit,reps:volume,score,date:s.date,workout:s.workout}}));document.getElementById("prs").innerHTML=Object.keys(best).length?Object.entries(best).map(([n,b])=>`<div class="row between history-item"><div><b>${esc(n)}</b><div class="small muted">${pretty(b.date)} · ${esc(b.workout)}</div></div><div style="text-align:right"><b>${b.weight} ${esc(b.unit||"lb")}</b><div class="small muted">Best set: ${b.reps} reps</div></div></div>`).join(""):`<div class="empty">Log workouts to build records.</div>`}
+function saveMeasure(){let date=document.getElementById("measureDate").value||todayISO(),weight=document.getElementById("measureWeight").value,fat=document.getElementById("measureFat").value,waist=document.getElementById("measureWaist").value,notes=document.getElementById("measureNotes").value;if(weight===""&&fat===""&&waist===""){alert("Enter at least one measurement.");return}let m={date,weight:weight===""?null:Number(weight),bodyFat:fat===""?null:Number(fat),waist:waist===""?null:Number(waist),notes};let idx=state.measurements.findIndex(x=>x.date===date);if(idx>=0)state.measurements[idx]={...state.measurements[idx],...m};else state.measurements.push(m);persist();alert("Measurement saved.");}
+function saveFood(){let date=document.getElementById("foodDate").value||todayISO();let f={date,calories:num("foodCalories"),protein:num("foodProtein"),carbs:num("foodCarbs"),fat:num("foodFat"),water:num("foodWater")};if(Object.values(f).every(v=>v===null||v===date)){alert("Enter at least one nutrition value.");return}let i=state.nutrition.findIndex(x=>x.date===date);if(i>=0)state.nutrition[i]=f;else state.nutrition.push(f);persist();alert("Nutrition saved.");}
+function num(id){let v=document.getElementById(id).value;return v===""?null:Number(v)}
+function renderFood(){let fs=state.nutrition.slice().sort((a,b)=>b.date.localeCompare(a.date));document.getElementById("foodHistory").innerHTML=fs.length?fs.map(f=>`<div class="history-item"><div class="row between"><b>${pretty(f.date)}</b><span>${f.calories??"—"} kcal</span></div><div class="small muted">Protein ${f.protein??"—"} g · Carbs ${f.carbs??"—"} g · Fat ${f.fat??"—"} g · Water ${f.water??"—"} oz</div></div>`).join(""):`<div class="empty">No nutrition entries yet.</div>`}
+function renderAll(){renderHistory();renderProgress();renderFood();renderProgram()}
+function download(filename,content,type){let blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("active",x===b));document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id==="page-"+b.dataset.page));if(b.dataset.page==="progress")renderProgress()}));
+document.getElementById("workoutSelect").addEventListener("change",()=>{setWorkoutDefaults();document.getElementById("sessionNotes").value="";});
+document.getElementById("saveWorkout").addEventListener("click",saveWorkout);
+document.getElementById("clearWorkout").addEventListener("click",clearEntries);
+document.getElementById("saveMeasure").addEventListener("click",saveMeasure);
+document.getElementById("saveFood").addEventListener("click",saveFood);
+document.getElementById("historyFilter").addEventListener("change",renderHistory);
+document.getElementById("exportData").addEventListener("click",()=>download("workout-coach-backup-"+todayISO()+".json",JSON.stringify(state,null,2),"application/json"));
+document.getElementById("exportCsv").addEventListener("click",()=>{let rows=[["Date","Workout","Exercise","Weight","Unit","Set 1 reps","Set 2 reps","Set 3 reps","Cardio minutes","Speed mph","Incline percent","Notes"]];state.sessions.forEach(s=>s.exercises.forEach(e=>rows.push([s.date,s.workout,e.name,e.weight,e.unit,...[0,1,2].map(i=>e.sets[i]??""),s.cardio?.minutes??"",s.cardio?.speed??"",s.cardio?.incline??"",s.notes||""])));download("workout-history-"+todayISO()+".csv",rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n"),"text/csv")});
+document.getElementById("importFile").addEventListener("change",async e=>{let f=e.target.files[0];if(!f)return;try{let x=JSON.parse(await f.text());if(!Array.isArray(x.sessions)||!Array.isArray(x.measurements)||!Array.isArray(x.nutrition))throw Error("This doesn't look like a workout coach backup.");if(!confirm("Restore this backup and replace current saved data?"))return;state=x;persist();alert("Backup restored.");}catch(err){alert("Could not restore backup: "+err.message)}e.target.value=""});
+document.getElementById("resetData").addEventListener("click",()=>{if(confirm("Permanently delete all saved workout, measurement, and nutrition data from this browser? Export a backup first if needed.")){localStorage.removeItem(KEY);state={sessions:[],measurements:[],nutrition:[],settings:{}};persist();setWorkoutDefaults()}});
+function init(){let d=todayISO();document.getElementById("todayDate").textContent=new Date().toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric",year:"numeric"});["sessionDate","measureDate","foodDate"].forEach(id=>document.getElementById(id).value=id==="sessionDate"?"2026-10-25":d);document.getElementById("sessionDate").value=d;document.getElementById("measureDate").value=d;document.getElementById("foodDate").value=d;setWorkoutDefaults();renderAll()}
+init();
+if("serviceWorker" in navigator && location.protocol.startsWith("http"))window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+</script>
+</body></html>

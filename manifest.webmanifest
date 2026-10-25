@@ -1,0 +1,10 @@
+{
+  "name": "My Workout Coach",
+  "short_name": "Workout Coach",
+  "description": "Personal workout, strength, body composition and nutrition tracker.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0b1220",
+  "theme_color": "#101827",
+  "icons": []
+}
